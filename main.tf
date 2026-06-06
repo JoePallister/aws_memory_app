@@ -11,6 +11,7 @@ terraform {
 provider "aws" {
   region = var.region
 }
+
 module "dynamodb" {
   source = "./modules/dynamodb"
 }
@@ -23,7 +24,7 @@ module "iam" {
 module "lambda" {
   source        = "./modules/lambda"
   source_dir    = "${path.module}/src/cards/create"
-  function_name = "release-control"
+  function_name = "create-card"
   role_arn      = module.iam.role_arn
   table_name    = module.dynamodb.name
 }
