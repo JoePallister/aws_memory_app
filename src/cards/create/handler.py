@@ -26,7 +26,7 @@ def post_card(body):
         "card_back": body["card_back"],
     }
     table.put_item(Item=new_item)
-    return {"statusCode": 200, "body": json.dumps(new_item)}
+    return new_item
 
 
 def get_cards(user_id):
@@ -40,7 +40,8 @@ def lambda_handler(event, context):
     if method == "POST":
         body = json.loads(event["body"])
         try:
-            return post_card(body)
+            new_card = post_card(body)
+            return {"statusCode": 200, "body": json.dumps(new_card)}
         except ValueError as e:
             return {"statusCode": 400, "body": json.dumps({"error": str(e)})}
     if method == "GET":
