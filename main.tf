@@ -35,7 +35,7 @@ module "create_card" {
 module "apigw" {
   source = "./modules/apigateway"
   lambda_invoke_arn    = module.create_card.invoke_arn
-  lambda_function_name = module.create_card.function_name
+  create_card_function_name = module.create_card.function_name
 }
 
 output "lambda_name" {

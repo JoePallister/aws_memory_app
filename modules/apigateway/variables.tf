@@ -2,11 +2,11 @@ variable "lambda_invoke_arn" {
   type = string
 }
 
-variable "lambda_function_name" {
+variable "create_card_function_name" {
   type = string
 }
 
 variable "api_name" {
   type    = string
-  default = "release-control-api"
+  default = "cards-api"
 }
