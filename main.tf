@@ -13,14 +13,14 @@ provider "aws" {
 }
 
 module "flashcards" {
-  source         = "./modules/dynamodb"
-  name           = "flashcards"
-  hash_key       = "user_id"
-  hash_key_type  = "S"
+  source        = "./modules/dynamodb"
+  name          = "flashcards"
+  hash_key      = "user_id"
+  hash_key_type = "S"
 }
 
 module "iam" {
-  source    = "./modules/iam"
+  source               = "./modules/iam"
   flashcards_table_arn = module.flashcards.arn
 }
 
@@ -33,8 +33,8 @@ module "create_card" {
 }
 
 module "apigw" {
-  source = "./modules/apigateway"
-  lambda_invoke_arn    = module.create_card.invoke_arn
+  source                    = "./modules/apigateway"
+  lambda_invoke_arn         = module.create_card.invoke_arn
   create_card_function_name = module.create_card.function_name
 }
 
