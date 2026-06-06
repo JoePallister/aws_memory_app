@@ -5,6 +5,7 @@ import os
 from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource("dynamodb")
+events = boto3.client("events")
 table = dynamodb.Table(os.environ["TABLE_NAME"])
 
 
@@ -35,12 +36,30 @@ def get_cards(user_id):
     return cards
 
 
+def push_event(card):
+    events.put_events(
+        Entries=[
+            {
+                "Source": "anki.cards",
+                "DetailType": "FlashcardCreated",
+                "Detail": json.dumps(
+                    {
+                        "user_id": card["user_id"],
+                        "card_id": card["card_id"],
+                    }
+                ),
+            }
+        ]
+    )
+
+
 def lambda_handler(event, context):
     method = event["requestContext"]["http"]["method"]
     if method == "POST":
         body = json.loads(event["body"])
         try:
             new_card = post_card(body)
+            push_event(new_card)
             return {"statusCode": 200, "body": json.dumps(new_card)}
         except ValueError as e:
             return {"statusCode": 400, "body": json.dumps({"error": str(e)})}
