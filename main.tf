@@ -12,7 +12,7 @@ provider "aws" {
   region = var.region
 }
 
-module "dynamodb" {
+module "flashcards" {
   source         = "./modules/dynamodb"
   name           = "flashcards"
   hash_key       = "user_id"
@@ -21,7 +21,7 @@ module "dynamodb" {
 
 module "iam" {
   source    = "./modules/iam"
-  table_arn = module.dynamodb.arn
+  table_arn = module.flashcards.arn
 }
 
 module "create-card" {
@@ -29,7 +29,7 @@ module "create-card" {
   source_dir    = "${path.module}/src/cards/create"
   function_name = "create-card"
   role_arn      = module.iam.role_arn
-  table_name    = module.dynamodb.name
+  table_name    = module.flashcards.name
 }
 
 module "apigw" {
@@ -42,8 +42,8 @@ output "lambda_name" {
   value = module.create-card.function_name
 }
 
-output "table_name" {
-  value = module.dynamodb.name
+output "flashcards_table_name" {
+  value = module.flashcards.name
 }
 
 output "api_endpoint" {
