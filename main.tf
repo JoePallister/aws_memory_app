@@ -21,7 +21,7 @@ module "iam" {
   table_arn = module.dynamodb.arn
 }
 
-module "lambda" {
+module "create-card" {
   source        = "./modules/lambda"
   source_dir    = "${path.module}/src/cards/create"
   function_name = "create-card"
@@ -31,13 +31,12 @@ module "lambda" {
 
 module "apigw" {
   source = "./modules/apigateway"
-
-  lambda_invoke_arn    = module.lambda.invoke_arn
-  lambda_function_name = module.lambda.function_name
+  lambda_invoke_arn    = module.create-card.invoke_arn
+  lambda_function_name = module.create-card.function_name
 }
 
 output "lambda_name" {
-  value = module.lambda.function_name
+  value = module.create-card.function_name
 }
 
 output "table_name" {
