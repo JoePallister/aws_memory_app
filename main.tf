@@ -21,7 +21,7 @@ module "flashcards" {
 
 module "iam" {
   source    = "./modules/iam"
-  table_arn = module.flashcards.arn
+  flashcards_table_arn = module.flashcards.arn
 }
 
 module "create-card" {

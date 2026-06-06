@@ -8,6 +8,6 @@ variable "policy_name" {
   default = "release-control-ddb-access"
 }
 
-variable "table_arn" {
+variable "flashcards_table_arn" {
   type = string
 }
