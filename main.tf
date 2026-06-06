@@ -13,10 +13,12 @@ provider "aws" {
 }
 
 module "flashcards" {
-  source        = "./modules/dynamodb"
-  name          = "flashcards"
-  hash_key      = "user_id"
-  hash_key_type = "S"
+  source         = "./modules/dynamodb"
+  name           = "flashcards"
+  hash_key       = "user_id"
+  hash_key_type  = "S"
+  range_key      = "card_id"
+  range_key_type = "S"
 }
 
 module "iam" {
