@@ -22,7 +22,7 @@ module "iam" {
 
 module "lambda" {
   source        = "./modules/lambda"
-  source_dir    = "${path.module}/lambda"
+  source_dir    = "${path.module}/src/cards/create"
   function_name = "release-control"
   role_arn      = module.iam.role_arn
   table_name    = module.dynamodb.name
