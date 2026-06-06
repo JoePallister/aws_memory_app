@@ -16,6 +16,12 @@ resource "aws_apigatewayv2_route" "post_cards" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
+resource "aws_apigatewayv2_route" "get_cards" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "GET /cards/{user_id}"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+}
+
 resource "aws_lambda_permission" "apigw" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"

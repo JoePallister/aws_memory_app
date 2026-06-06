@@ -24,7 +24,8 @@ data "aws_iam_policy_document" "ddb_access" {
     actions = [
       "dynamodb:GetItem",
       "dynamodb:PutItem",
-      "dynamodb:UpdateItem"
+      "dynamodb:UpdateItem",
+      "dynamodb:Query"
     ]
 
     resources = [var.flashcards_table_arn]
