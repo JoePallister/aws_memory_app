@@ -24,22 +24,22 @@ module "iam" {
   flashcards_table_arn = module.flashcards.arn
 }
 
-module "create-card" {
+module "create_card" {
   source        = "./modules/lambda"
   source_dir    = "${path.module}/src/cards/create"
-  function_name = "create-card"
+  function_name = "create_card"
   role_arn      = module.iam.role_arn
   table_name    = module.flashcards.name
 }
 
 module "apigw" {
   source = "./modules/apigateway"
-  lambda_invoke_arn    = module.create-card.invoke_arn
-  lambda_function_name = module.create-card.function_name
+  lambda_invoke_arn    = module.create_card.invoke_arn
+  lambda_function_name = module.create_card.function_name
 }
 
 output "lambda_name" {
-  value = module.create-card.function_name
+  value = module.create_card.function_name
 }
 
 output "flashcards_table_name" {

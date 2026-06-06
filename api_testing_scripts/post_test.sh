@@ -6,3 +6,5 @@ curl -X POST \
 -d '{
 "user_id": "12"
 }'
+
+echo
