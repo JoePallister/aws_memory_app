@@ -64,7 +64,7 @@ resource "aws_cloudwatch_event_rule" "flashcard_created" {
   name = "flashcard-created"
 
   event_pattern = jsonencode({
-    source = ["anki.cards"]
+    source        = ["anki.cards"]
     "detail-type" = ["FlashcardCreated"]
   })
 }
