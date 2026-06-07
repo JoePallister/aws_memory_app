@@ -4,11 +4,19 @@ from datetime import timezone
 import uuid
 import boto3
 import os
+from decimal import Decimal
 from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource("dynamodb")
 events = boto3.client("events")
 table = dynamodb.Table(os.environ["TABLE_NAME"])
+
+
+# dynamodb's Decimal type is not JSON serializable, so we need to convert it to int or float
+def decimal_default(obj):
+    if isinstance(obj, Decimal):
+        return int(obj) if obj % 1 == 0 else float(obj)
+    raise TypeError
 
 
 def validate_card(data):
@@ -53,6 +61,9 @@ def push_event(card):
                     {
                         "user_id": card["user_id"],
                         "card_id": card["card_id"],
+                        "last_reviewed_at": card["last_reviewed_at"],
+                        "difficulty_factor": card["difficulty_factor"],
+                        "interval": card["interval"],
                     }
                 ),
             }
@@ -73,5 +84,5 @@ def lambda_handler(event, context):
     if method == "GET":
         user_id = event["pathParameters"]["user_id"]
         cards = get_cards(user_id)
-        return {"statusCode": 200, "body": json.dumps(cards)}
+        return {"statusCode": 200, "body": json.dumps(cards, default=decimal_default)}
     return {"statusCode": 405, "body": json.dumps({"error": "method not allowed"})}
