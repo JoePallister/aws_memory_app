@@ -1,3 +1,4 @@
+from decimal import Decimal
 import json
 import uuid
 import boto3
@@ -25,6 +26,9 @@ def post_card(body):
         "card_id": str(uuid.uuid4()),
         "card_front": body["card_front"],
         "card_back": body["card_back"],
+        "difficulty_factor": body.get("difficulty_factor", 100),
+        "interval": 1,
+        "repetitions": 0,
     }
     table.put_item(Item=new_item)
     return new_item
