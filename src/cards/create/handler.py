@@ -1,4 +1,6 @@
+from datetime import datetime
 import json
+from time import timezone
 import uuid
 import boto3
 import os
@@ -20,6 +22,7 @@ def validate_card(data):
 
 def post_card(body):
     validate_card(body)
+    now = datetime.now(timezone.utc).isoformat()
     new_item = {
         "user_id": body["user_id"],
         "card_id": str(uuid.uuid4()),
@@ -27,7 +30,8 @@ def post_card(body):
         "card_back": body["card_back"],
         "difficulty_factor": body.get("difficulty_factor", 100),
         "interval": 1,
-        "repetitions": 0,
+        "created_at": now,
+        "last_reviewed_at": now,
     }
     table.put_item(Item=new_item)
     return new_item
