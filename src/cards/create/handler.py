@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-from time import timezone
+from datetime import timezone
 import uuid
 import boto3
 import os

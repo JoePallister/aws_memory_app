@@ -34,6 +34,14 @@ module "create_card" {
   table_name    = module.flashcards.name
 }
 
+module "review_scheduler" {
+  source        = "./modules/lambda"
+  source_dir    = "${path.module}/src/cards/review_scheduler"
+  function_name = "review_scheduler"
+  role_arn      = module.iam.role_arn
+  table_name    = module.flashcards.name
+}
+
 module "apigw" {
   source                    = "./modules/apigateway"
   lambda_invoke_arn         = module.create_card.invoke_arn
@@ -50,4 +58,26 @@ output "flashcards_table_name" {
 
 output "api_endpoint" {
   value = module.apigw.api_endpoint
+}
+
+resource "aws_cloudwatch_event_rule" "flashcard_created" {
+  name = "flashcard-created"
+
+  event_pattern = jsonencode({
+    source = ["anki.cards"]
+    "detail-type" = ["FlashcardCreated"]
+  })
+}
+
+resource "aws_cloudwatch_event_target" "review_scheduler_lambda" {
+  rule = aws_cloudwatch_event_rule.flashcard_created.name
+  arn  = module.review_scheduler.arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge" {
+  statement_id  = "AllowExecutionFromEventBridge"
+  action        = "lambda:InvokeFunction"
+  function_name = module.review_scheduler.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.flashcard_created.arn
 }
