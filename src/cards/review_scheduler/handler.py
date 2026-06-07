@@ -1,5 +1,4 @@
 from datetime import datetime, timezone
-import json
 import boto3
 import os
 
