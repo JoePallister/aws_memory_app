@@ -1,6 +1,23 @@
 resource "aws_apigatewayv2_api" "api" {
   name          = var.api_name
   protocol_type = "HTTP"
+  cors_configuration {
+    allow_origins = [
+      "http://localhost:8000"
+    ]
+
+    allow_methods = [
+      "GET",
+      "POST",
+      "OPTIONS"
+    ]
+
+    allow_headers = [
+      "content-type"
+    ]
+
+    max_age = 30
+  }
 }
 
 resource "aws_apigatewayv2_integration" "lambda" {

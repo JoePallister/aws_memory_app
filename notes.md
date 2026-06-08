@@ -50,3 +50,9 @@ Review API Lambda
 
 
 "We use DynamoDB because the system is driven by predictable, high-throughput key-based access patterns (user → deck → due cards), and we want low-latency reads/writes without relational overhead or connection scaling issues."
+
+Can run the frontend locally from frontend/ with 
+
+python3 -m http.server 8000
+
+we need to update the API_URL in app.js with the real url (output by terraform)
