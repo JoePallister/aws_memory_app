@@ -5,7 +5,7 @@ import uuid
 import boto3
 import os
 from decimal import Decimal
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 
 dynamodb = boto3.resource("dynamodb")
 events = boto3.client("events")
@@ -45,9 +45,21 @@ def post_card(body):
     return new_item
 
 
-def get_cards(user_id):
-    response = table.query(KeyConditionExpression=Key("user_id").eq(user_id))
-    cards = response["Items"]
+def get_cards(user_id, only_due=False):
+    query = table.query(KeyConditionExpression=Key("user_id").eq(user_id))
+
+    cards = query["Items"]
+
+    if only_due:
+        now = datetime.now(timezone.utc).isoformat()
+
+        query = table.query(
+            KeyConditionExpression=Key("user_id").eq(user_id),
+            FilterExpression=Attr("next_review_time").lte(now),
+        )
+
+        cards = query["Items"]
+
     return cards
 
 
@@ -83,6 +95,11 @@ def lambda_handler(event, context):
             return {"statusCode": 400, "body": json.dumps({"error": str(e)})}
     if method == "GET":
         user_id = event["pathParameters"]["user_id"]
-        cards = get_cards(user_id)
+
+        query_params = event.get("queryStringParameters") or {}
+        only_due = query_params.get("only_due", "false").lower() == "true"
+
+        cards = get_cards(user_id, only_due=only_due)
+
         return {"statusCode": 200, "body": json.dumps(cards, default=decimal_default)}
     return {"statusCode": 405, "body": json.dumps({"error": "method not allowed"})}

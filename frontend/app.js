@@ -1,9 +1,10 @@
-const API_URL = "https://vy06463wtl.execute-api.eu-north-1.amazonaws.com";
+const API_URL = "https://ynchpqsnj9.execute-api.eu-north-1.amazonaws.com";
 
 const status = document.getElementById("status");
 const container = document.getElementById("cards-container");
 
 const userId = localStorage.getItem("user_id");
+const MODE = document.body.dataset.mode || "all";
 
 if (!userId) {
   window.location.href = "index.html";
@@ -13,7 +14,13 @@ async function loadCards() {
   status.textContent = "Loading cards...";
 
   try {
-    const res = await fetch(`${API_URL}/cards/${userId}`);
+    let url = `${API_URL}/cards/${userId}`;
+
+    if (MODE === "due") {
+      url += "?only_due=true";
+    }
+
+    const res = await fetch(url);
     const data = await res.json();
 
     renderCards(data);
