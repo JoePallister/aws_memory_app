@@ -42,10 +42,20 @@ module "review_scheduler" {
   table_name    = module.flashcards.name
 }
 
+module "interval_increment" {
+  source        = "./modules/lambda"
+  source_dir    = "${path.module}/src/cards/interval_increment"
+  function_name = "interval_increment"
+  role_arn      = module.iam.role_arn
+  table_name    = module.flashcards.name
+}
+
 module "apigw" {
-  source                    = "./modules/apigateway"
-  lambda_invoke_arn         = module.create_card.invoke_arn
-  create_card_function_name = module.create_card.function_name
+  source                               = "./modules/apigateway"
+  create_card_lambda_invoke_arn        = module.create_card.invoke_arn
+  create_card_function_name            = module.create_card.function_name
+  interval_increment_lambda_invoke_arn = module.interval_increment.invoke_arn
+  interval_increment_function_name     = module.interval_increment.function_name
 }
 
 output "lambda_name" {

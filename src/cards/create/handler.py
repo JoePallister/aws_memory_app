@@ -37,7 +37,7 @@ def post_card(body):
         "card_front": body["card_front"],
         "card_back": body["card_back"],
         "difficulty_factor": body.get("difficulty_factor", 100),
-        "interval": 1,
+        "review_interval": 1,
         "created_at": now,
         "last_reviewed_at": now,
     }
@@ -75,7 +75,7 @@ def push_event(card):
                         "card_id": card["card_id"],
                         "last_reviewed_at": card["last_reviewed_at"],
                         "difficulty_factor": card["difficulty_factor"],
-                        "interval": card["interval"],
+                        "review_interval": card["review_interval"],
                     }
                 ),
             }

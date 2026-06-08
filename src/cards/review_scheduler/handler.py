@@ -11,8 +11,10 @@ def calculate_next_review_time(card):
     last_reviewed_at = card.get("last_reviewed_at")
     last_reviewed_at = int(datetime.fromisoformat(last_reviewed_at).timestamp())
     difficulty_factor = card.get("difficulty_factor")
-    interval = card.get("interval")
-    next_review_time = last_reviewed_at + interval * difficulty_factor * SCALING_FACTOR
+    review_interval = card.get("review_interval")
+    next_review_time = (
+        last_reviewed_at + review_interval * difficulty_factor * SCALING_FACTOR
+    )
     return datetime.fromtimestamp(next_review_time, tz=timezone.utc).isoformat()
 
 

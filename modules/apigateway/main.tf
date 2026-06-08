@@ -9,7 +9,8 @@ resource "aws_apigatewayv2_api" "api" {
     allow_methods = [
       "GET",
       "POST",
-      "OPTIONS"
+      "OPTIONS",
+      "PATCH"
     ]
 
     allow_headers = [
@@ -20,29 +21,50 @@ resource "aws_apigatewayv2_api" "api" {
   }
 }
 
-resource "aws_apigatewayv2_integration" "lambda" {
+resource "aws_apigatewayv2_integration" "create_card_lambda" {
   api_id                 = aws_apigatewayv2_api.api.id
   integration_type       = "AWS_PROXY"
-  integration_uri        = var.lambda_invoke_arn
+  integration_uri        = var.create_card_lambda_invoke_arn
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_integration" "interval_increment_lambda" {
+  api_id                 = aws_apigatewayv2_api.api.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = var.interval_increment_lambda_invoke_arn
   payload_format_version = "2.0"
 }
 
 resource "aws_apigatewayv2_route" "post_cards" {
   api_id    = aws_apigatewayv2_api.api.id
   route_key = "POST /cards"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.create_card_lambda.id}"
 }
 
 resource "aws_apigatewayv2_route" "get_cards" {
   api_id    = aws_apigatewayv2_api.api.id
   route_key = "GET /cards/{user_id}"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.create_card_lambda.id}"
 }
 
-resource "aws_lambda_permission" "apigw" {
+resource "aws_apigatewayv2_route" "interval_increment" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "PATCH /cards/{card_id}"
+  target    = "integrations/${aws_apigatewayv2_integration.interval_increment_lambda.id}"
+}
+
+resource "aws_lambda_permission" "apigw_create_care" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = var.create_card_function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "apigw_interval_increment" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = var.interval_increment_function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*/*"
 }
