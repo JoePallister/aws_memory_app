@@ -1,59 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anki Clone</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Login</title>
 </head>
 <body>
-  <main class="container">
-    <h1>Anki Clone</h1>
 
-    <section class="card">
-      <h2>Create Card</h2>
+  <h1>Login</h1>
 
-      <form id="card-form">
-        <div class="form-group">
-          <label for="user_id">User ID</label>
-          <input
-            id="user_id"
-            type="text"
-            value="1"
-            required
-          />
-        </div>
+  <input id="user_id" placeholder="Enter user ID" />
+  <button id="login">Login</button>
 
-        <div class="form-group">
-          <label for="front">Front</label>
-          <input
-            id="front"
-            type="text"
-            placeholder="e.g. What does 受 mean?"
-            required
-          />
-        </div>
+  <script>
+    document.getElementById("login").addEventListener("click", () => {
+      const userId = document.getElementById("user_id").value;
 
-        <div class="form-group">
-          <label for="back">Back</label>
-          <textarea
-            id="back"
-            rows="4"
-            placeholder="e.g. to receive"
-            required
-          ></textarea>
-        </div>
+      if (!userId) return;
 
-        <button type="submit">Create Card</button>
-      </form>
-    </section>
+      localStorage.setItem("user_id", userId);
+      window.location.href = "cards.html";
+    });
+  </script>
 
-    <section class="card">
-      <h2>Response</h2>
-      <pre id="status">No requests yet.</pre>
-    </section>
-  </main>
-
-  <script src="app.js"></script>
 </body>
 </html>
