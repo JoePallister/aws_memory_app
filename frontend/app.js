@@ -6,6 +6,8 @@ const container = document.getElementById("cards-container");
 const userId = localStorage.getItem("user_id");
 const MODE = document.body.dataset.mode || "all";
 
+const cardForm = document.getElementById("card-form");
+
 if (!userId) {
   window.location.href = "index.html";
 }
@@ -65,11 +67,11 @@ function renderCards(cards) {
 document.getElementById("load-cards")
   .addEventListener("click", loadCards);
 
-document.getElementById("card-form")
-  .addEventListener("submit", async (e) => {
+if (cardForm) {
+  cardForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const payload = {
+  const payload = {
       user_id: userId,
       card_front: document.getElementById("front").value,
       card_back: document.getElementById("back").value,
@@ -94,6 +96,7 @@ document.getElementById("card-form")
     } catch (err) {
       status.textContent = `Error: ${err}`;
     }
-  });
+  }); 
+}
 
 loadCards();
