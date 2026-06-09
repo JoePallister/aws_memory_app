@@ -1,4 +1,4 @@
-const API_URL = "https://ynchpqsnj9.execute-api.eu-north-1.amazonaws.com";
+const API_URL = "https://3g373oqoe9.execute-api.eu-north-1.amazonaws.com";
 
 const status = document.getElementById("status");
 const container = document.getElementById("cards-container");
@@ -42,10 +42,22 @@ function renderCards(cards) {
   cards.forEach(card => {
     const div = document.createElement("div");
     div.className = "card";
+
     div.innerHTML = `
-      <strong>Front:</strong> ${card.card_front}<br/>
-      <strong>Back:</strong> ${card.card_back}
+      <h3>Front: ${card.card_front}</h3>
+
+      <p><strong>Back:</strong> ${card.card_back}</p>
+
+      <hr>
+
+      <p><strong>User ID:</strong> ${card.user_id}</p>
+      <p><strong>Card ID:</strong> ${card.card_id}</p>
+      <p><strong>Last reviewed:</strong> ${card.last_reviewed_at ?? "Never"}</p>
+      <p><strong>Difficulty factor:</strong> ${card.difficulty_factor}</p>
+      <p><strong>Review interval:</strong> ${card.review_interval}</p>
+      <p><strong>Next review time:</strong> ${card.next_review_time ?? "Not scheduled"}</p>
     `;
+
     container.appendChild(div);
   });
 }
