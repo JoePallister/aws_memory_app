@@ -45,6 +45,21 @@ function renderCards(cards) {
     const div = document.createElement("div");
     div.className = "card";
 
+    let buttonsHtml = "";
+
+    if (MODE === "due") {
+      buttonsHtml = `
+        <div class="review-buttons">
+          <button class="correct-btn" data-card-id="${card.card_id}">
+            Correct
+          </button>
+          <button class="incorrect-btn" data-card-id="${card.card_id}">
+            Incorrect
+          </button>
+        </div>
+      `;
+    }
+
     div.innerHTML = `
       <h3>Front: ${card.card_front}</h3>
 
@@ -58,6 +73,8 @@ function renderCards(cards) {
       <p><strong>Difficulty factor:</strong> ${card.difficulty_factor}</p>
       <p><strong>Review interval:</strong> ${card.review_interval}</p>
       <p><strong>Next review time:</strong> ${card.next_review_time ?? "Not scheduled"}</p>
+
+      ${buttonsHtml}
     `;
 
     container.appendChild(div);
@@ -98,5 +115,17 @@ if (cardForm) {
     }
   }); 
 }
+
+container.addEventListener("click", (e) => {
+  if (e.target.classList.contains("correct-btn")) {
+    const cardId = e.target.dataset.cardId;
+    console.log("Correct:", cardId);
+  }
+
+  if (e.target.classList.contains("incorrect-btn")) {
+    const cardId = e.target.dataset.cardId;
+    console.log("Incorrect:", cardId);
+  }
+});
 
 loadCards();

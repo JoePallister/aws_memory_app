@@ -67,3 +67,9 @@ form {
   color: #555;
   white-space: pre-wrap;
 }
+
+.review-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
