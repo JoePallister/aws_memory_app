@@ -116,15 +116,42 @@ if (cardForm) {
   }); 
 }
 
-container.addEventListener("click", (e) => {
-  if (e.target.classList.contains("correct-btn")) {
-    const cardId = e.target.dataset.cardId;
-    console.log("Correct:", cardId);
+container.addEventListener("click", async (e) => {
+  if (
+    !e.target.classList.contains("correct-btn") &&
+    !e.target.classList.contains("incorrect-btn")
+  ) {
+    return;
   }
 
-  if (e.target.classList.contains("incorrect-btn")) {
-    const cardId = e.target.dataset.cardId;
-    console.log("Incorrect:", cardId);
+  const cardId = e.target.dataset.cardId;
+
+  const increment = e.target.classList.contains("correct-btn")
+    ? 1
+    : -1;
+
+  status.textContent = "Updating card...";
+
+  try {
+    const res = await fetch(`${API_URL}/cards/${cardId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        interval_increment: increment
+      }),
+    });
+
+    const text = await res.text();
+    status.textContent = text;
+
+    if (res.ok) {
+      loadCards();
+    }
+  } catch (err) {
+    status.textContent = `Error: ${err}`;
   }
 });
 
