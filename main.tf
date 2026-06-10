@@ -79,8 +79,22 @@ resource "aws_cloudwatch_event_rule" "flashcard_created" {
   })
 }
 
+resource "aws_cloudwatch_event_rule" "flashcard_reviewed" {
+  name = "flashcard-reviewed"
+
+  event_pattern = jsonencode({
+    source        = ["anki.cards"]
+    "detail-type" = ["FlashcardReviewed"]
+  })
+}
+
 resource "aws_cloudwatch_event_target" "review_scheduler_lambda" {
   rule = aws_cloudwatch_event_rule.flashcard_created.name
+  arn  = module.review_scheduler.arn
+}
+
+resource "aws_cloudwatch_event_target" "review_scheduler_lambda_update" {
+  rule = aws_cloudwatch_event_rule.flashcard_reviewed.name
   arn  = module.review_scheduler.arn
 }
 
@@ -90,4 +104,12 @@ resource "aws_lambda_permission" "allow_eventbridge" {
   function_name = module.review_scheduler.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.flashcard_created.arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_reviewed" {
+  statement_id  = "AllowExecutionFromEventBridgeReviewed"
+  action        = "lambda:InvokeFunction"
+  function_name = module.review_scheduler.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.flashcard_reviewed.arn
 }

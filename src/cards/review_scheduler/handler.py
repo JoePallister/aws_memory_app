@@ -31,9 +31,28 @@ def set_next_review_time(user_id, card_id, next_review_time):
     )
 
 
+def set_last_reviewed_at(card):
+    table.update_item(
+        Key={
+            "user_id": card["user_id"],
+            "card_id": card["card_id"],
+        },
+        UpdateExpression="SET last_reviewed_at = :lra",
+        ExpressionAttributeValues={
+            ":lra": datetime.now(timezone.utc).isoformat(),
+        },
+    )
+
+
 def lambda_handler(event, context):
+    detail_type = event.get("detail-type")
     detail = event.get("detail", {})
     print(f"Flashcard created: {detail}")
+    if detail_type == "FlashcardReviewed":
+        print(f"Flashcard reviewed: {event.get('detail', {})}")
+        set_last_reviewed_at(detail)
+    if detail_type == "FlashcardCreated":
+        print(f"Flashcard created: {detail}")
     next_review_time = calculate_next_review_time(detail)
     set_next_review_time(detail["user_id"], detail["card_id"], next_review_time)
     print(f"Set next review time for card {detail['card_id']}: {next_review_time}")
