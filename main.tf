@@ -58,6 +58,11 @@ module "apigw" {
   interval_increment_function_name     = module.interval_increment.function_name
 }
 
+module "cognito" {
+  source = "./modules/cognito"
+  region = var.region
+}
+
 output "lambda_name" {
   value = module.create_card.function_name
 }
@@ -68,6 +73,18 @@ output "flashcards_table_name" {
 
 output "api_endpoint" {
   value = module.apigw.api_endpoint
+}
+
+output "cognito_hosted_ui_domain" {
+  value = module.cognito.cognito_hosted_ui_domain
+}
+
+output "cognito_user_pool_id" {
+  value = module.cognito.cognito_user_pool_id
+}
+
+output "cognito_user_pool_client_id" {
+  value = module.cognito.cognito_user_pool_client_id
 }
 
 resource "aws_cloudwatch_event_rule" "flashcard_created" {
