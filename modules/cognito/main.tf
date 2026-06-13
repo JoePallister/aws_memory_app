@@ -28,7 +28,7 @@ resource "aws_cognito_user_pool_client" "web" {
     "http://localhost:5500/index.html"
   ]
 
-  allowed_oauth_flows = ["code"]
+  allowed_oauth_flows                  = ["code"]
   allowed_oauth_flows_user_pool_client = true
 
   allowed_oauth_scopes = [
