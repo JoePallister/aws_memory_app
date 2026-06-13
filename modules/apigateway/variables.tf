@@ -18,3 +18,11 @@ variable "interval_increment_lambda_invoke_arn" {
 variable "interval_increment_function_name" {
   type = string
 }
+
+variable "cognito_issuer" {
+  type = string
+}
+
+variable "cognito_audience" {
+  type = string
+}

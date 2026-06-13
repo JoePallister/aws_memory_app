@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="styles.css">
   <title>Login</title>
 </head>
 <body>
 
-  <h1>Login</h1>
+  <h1>Flashcards</h1>
 
-  <input id="user_id" placeholder="Enter user ID" />
-  <button id="login">Login</button>
+  <button id="login">Login with Cognito</button>
 
   <script>
+    const domain = "https://flashcards-app-abcdefgh.auth.eu-north-1.amazoncognito.com";
+    const clientId = "6i9g3v42m2r5asvsfi5qervrub";
+    const redirectUri = "http://localhost:8000/callback.html";
+
     document.getElementById("login").addEventListener("click", () => {
-      const userId = document.getElementById("user_id").value;
+      const url =
+        `${domain}/login?` +
+        `client_id=${clientId}` +
+        `&response_type=code` +
+        `&scope=openid+email+profile` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}`;
 
-      if (!userId) return;
-
-      localStorage.setItem("user_id", userId);
-      window.location.href = "cards.html";
+      window.location.href = url;
     });
   </script>
 

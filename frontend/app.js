@@ -1,14 +1,14 @@
-const API_URL = "https://fpchf3oj8e.execute-api.eu-north-1.amazonaws.com";
+const API_URL = "https://hv0gtvild5.execute-api.eu-north-1.amazonaws.com";
 
 const status = document.getElementById("status");
 const container = document.getElementById("cards-container");
-
-const userId = localStorage.getItem("user_id");
 const MODE = document.body.dataset.mode || "all";
 
 const cardForm = document.getElementById("card-form");
 
-if (!userId) {
+const token = localStorage.getItem("access_token");
+
+if (!token) {
   window.location.href = "index.html";
 }
 
@@ -16,14 +16,19 @@ async function loadCards() {
   status.textContent = "Loading cards...";
 
   try {
-    let url = `${API_URL}/cards/${userId}`;
+    let url = `${API_URL}/cards`;
 
     if (MODE === "due") {
       url += "?only_due=true";
     }
 
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     const data = await res.json();
+    console.log("API RESPONSE:", data);
 
     renderCards(data);
 
@@ -89,7 +94,6 @@ if (cardForm) {
     e.preventDefault();
 
   const payload = {
-      user_id: userId,
       card_front: document.getElementById("front").value,
       card_back: document.getElementById("back").value,
     };
@@ -99,7 +103,8 @@ if (cardForm) {
     try {
       const res = await fetch(`${API_URL}/cards`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -136,10 +141,10 @@ container.addEventListener("click", async (e) => {
     const res = await fetch(`${API_URL}/cards/${cardId}`, {
       method: "PATCH",
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: userId,
         interval_increment: increment
       }),
     });

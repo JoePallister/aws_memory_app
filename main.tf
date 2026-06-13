@@ -56,6 +56,8 @@ module "apigw" {
   create_card_function_name            = module.create_card.function_name
   interval_increment_lambda_invoke_arn = module.interval_increment.invoke_arn
   interval_increment_function_name     = module.interval_increment.function_name
+  cognito_issuer   = module.cognito.issuer_url
+  cognito_audience  = module.cognito.user_pool_client_id
 }
 
 module "cognito" {
@@ -84,7 +86,7 @@ output "cognito_user_pool_id" {
 }
 
 output "cognito_user_pool_client_id" {
-  value = module.cognito.cognito_user_pool_client_id
+  value = module.cognito.user_pool_client_id
 }
 
 resource "aws_cloudwatch_event_rule" "flashcard_created" {

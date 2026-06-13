@@ -20,19 +20,17 @@ def decimal_default(obj):
 
 
 def validate_card(data):
-    if "user_id" not in data:
-        raise ValueError("Missing user_id")
     if "card_front" not in data:
         raise ValueError("Missing card_front")
     if "card_back" not in data:
         raise ValueError("Missing card_back")
 
 
-def post_card(body):
+def post_card(body, user_id):
     validate_card(body)
     now = datetime.now(timezone.utc).isoformat()
     new_item = {
-        "user_id": body["user_id"],
+        "user_id": user_id,
         "card_id": str(uuid.uuid4()),
         "card_front": body["card_front"],
         "card_back": body["card_back"],
@@ -63,7 +61,7 @@ def get_cards(user_id, only_due=False):
     return cards
 
 
-def push_event(card):
+def push_event(card, user_id):
     events.put_events(
         Entries=[
             {
@@ -71,7 +69,7 @@ def push_event(card):
                 "DetailType": "FlashcardCreated",
                 "Detail": json.dumps(
                     {
-                        "user_id": card["user_id"],
+                        "user_id": user_id,
                         "card_id": card["card_id"],
                         "last_reviewed_at": card["last_reviewed_at"],
                         "difficulty_factor": card["difficulty_factor"],
@@ -86,15 +84,18 @@ def push_event(card):
 def lambda_handler(event, context):
     method = event["requestContext"]["http"]["method"]
     if method == "POST":
+        claims = event["requestContext"]["authorizer"]["jwt"]["claims"]
+        user_id = claims["sub"]
         body = json.loads(event["body"])
         try:
-            new_card = post_card(body)
-            push_event(new_card)
+            new_card = post_card(body, user_id)
+            push_event(new_card, user_id)
             return {"statusCode": 200, "body": json.dumps(new_card)}
         except ValueError as e:
             return {"statusCode": 400, "body": json.dumps({"error": str(e)})}
     if method == "GET":
-        user_id = event["pathParameters"]["user_id"]
+        claims = event["requestContext"]["authorizer"]["jwt"]["claims"]
+        user_id = claims["sub"]
 
         query_params = event.get("queryStringParameters") or {}
         only_due = query_params.get("only_due", "false").lower() == "true"

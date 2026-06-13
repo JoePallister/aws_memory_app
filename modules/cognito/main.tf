@@ -21,11 +21,11 @@ resource "aws_cognito_user_pool_client" "web" {
   generate_secret = false
 
   callback_urls = [
-    "http://localhost:5500/callback.html"
+    "http://localhost:8000/callback.html"
   ]
 
   logout_urls = [
-    "http://localhost:5500/index.html"
+    "http://localhost:8000/index.html"
   ]
 
   allowed_oauth_flows                  = ["code"]
