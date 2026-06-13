@@ -1,4 +1,4 @@
-const API_URL = "https://hv0gtvild5.execute-api.eu-north-1.amazonaws.com";
+const { API_URL } = window.CONSTANTS || {};
 
 const status = document.getElementById("status");
 const container = document.getElementById("cards-container");

@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Login</title>
+  <script src="constants.js"></script>
 </head>
 <body>
 
@@ -10,9 +11,7 @@
   <button id="login">Login with Cognito</button>
 
   <script>
-    const domain = "https://flashcards-app-abcdefgh.auth.eu-north-1.amazoncognito.com";
-    const clientId = "6i9g3v42m2r5asvsfi5qervrub";
-    const redirectUri = "http://localhost:8000/callback.html";
+    const { COGNITO_DOMAIN: domain, CLIENT_ID: clientId, REDIRECT_URI: redirectUri } = window.CONSTANTS || {};
 
     document.getElementById("login").addEventListener("click", () => {
       const url =

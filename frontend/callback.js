@@ -1,6 +1,4 @@
-const COGNITO_DOMAIN = "https://flashcards-app-abcdefgh.auth.eu-north-1.amazoncognito.com";
-const CLIENT_ID = "6i9g3v42m2r5asvsfi5qervrub";
-const REDIRECT_URI = "http://localhost:8000/callback.html";
+const { COGNITO_DOMAIN, CLIENT_ID, REDIRECT_URI } = window.CONSTANTS || {};
 
 // 1. Extract code from URL
 const params = new URLSearchParams(window.location.search);
