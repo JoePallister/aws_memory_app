@@ -22,7 +22,7 @@ resource "aws_apigatewayv2_api" "api" {
 resource "aws_apigatewayv2_authorizer" "cognito" {
   api_id          = aws_apigatewayv2_api.api.id
   authorizer_type = "JWT"
-  name = "cognito-authorizer"
+  name            = "cognito-authorizer"
 
   identity_sources = ["$request.header.Authorization"]
 
@@ -47,25 +47,25 @@ resource "aws_apigatewayv2_integration" "interval_increment_lambda" {
 }
 
 resource "aws_apigatewayv2_route" "post_cards" {
-  api_id    = aws_apigatewayv2_api.api.id
-  route_key = "POST /cards"
-  target    = "integrations/${aws_apigatewayv2_integration.create_card_lambda.id}"
+  api_id             = aws_apigatewayv2_api.api.id
+  route_key          = "POST /cards"
+  target             = "integrations/${aws_apigatewayv2_integration.create_card_lambda.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
 }
 
 resource "aws_apigatewayv2_route" "get_cards" {
-  api_id    = aws_apigatewayv2_api.api.id
-  route_key = "GET /cards"
-  target    = "integrations/${aws_apigatewayv2_integration.create_card_lambda.id}"
+  api_id             = aws_apigatewayv2_api.api.id
+  route_key          = "GET /cards"
+  target             = "integrations/${aws_apigatewayv2_integration.create_card_lambda.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
 }
 
 resource "aws_apigatewayv2_route" "interval_increment" {
-  api_id    = aws_apigatewayv2_api.api.id
-  route_key = "PATCH /cards/{card_id}"
-  target    = "integrations/${aws_apigatewayv2_integration.interval_increment_lambda.id}"
+  api_id             = aws_apigatewayv2_api.api.id
+  route_key          = "PATCH /cards/{card_id}"
+  target             = "integrations/${aws_apigatewayv2_integration.interval_increment_lambda.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
 }
