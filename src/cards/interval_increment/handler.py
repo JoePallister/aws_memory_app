@@ -64,7 +64,8 @@ def push_event(card):
 def lambda_handler(event, context):
     body = json.loads(event["body"])
     card_id = event["pathParameters"]["card_id"]
-    user_id = body.get("user_id")
+    claims = event["requestContext"]["authorizer"]["jwt"]["claims"]
+    user_id = claims["sub"]
     interval_increment = body.get("interval_increment")
     try:
         print(
